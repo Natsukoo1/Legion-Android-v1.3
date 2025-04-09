@@ -1,0 +1,32 @@
+CHANGLOG:
+=====
+V1.1
+=====
+>love sauvegarde les % pour deux personnes à chaque fois
+>patpat ajouté
+>phcomment ajouté
+>clyde ajouté
+
+=====
+V1.2
+=====
+
+>crush
+>pp
+>infouser
+>banall
+> Correction du systéme de backup serveur
+=====
+v1.3
+=====
+> voiture
+> clear 
+> webhook create / speak
+> espace
+---
+
+>chanel
+>removechanel
+>nuke
+>masschanel
+=====

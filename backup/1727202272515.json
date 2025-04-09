@@ -1,0 +1,139 @@
+{
+  "serverName": "Dream'sFACTION",
+  "categories": [
+    {
+      "name": "INFORMATIONS",
+      "position": 1,
+      "channels": [
+        {
+          "name": "『📃』changelog",
+          "type": "GUILD_TEXT",
+          "position": 0,
+          "description": "Journal des modifications du bot."
+        },
+        {
+          "name": "『👋』bienvenue",
+          "type": "GUILD_TEXT",
+          "position": 1,
+          "description": "Accueil des nouveaux utilisateurs, avec des informations sur le bot et ses commandes."
+        },
+        {
+          "name": "『⛔』règles",
+          "type": "GUILD_TEXT",
+          "position": 2,
+          "description": "Règles du serveur, avec des informations spécifiques sur l'utilisation correcte du bot."
+        },
+        {
+          "name": "『🗂』informations",
+          "type": "GUILD_TEXT",
+          "position": 3,
+          "description": "Présentation du bot, tutoriels, et ressources supplémentaires."
+        }
+      ]
+    },
+    {
+      "name": "Salons textuels",
+      "position": 2,
+      "channels": [
+        {
+          "name": "『💬』général",
+          "type": "GUILD_TEXT",
+          "position": 0,
+          "description": "Salon de discussion générale autour du bot."
+        },
+        {
+          "name": "『❓』support-bot",
+          "type": "GUILD_TEXT",
+          "position": 1,
+          "description": "Pour poser des questions ou demander de l'aide concernant le bot."
+        },
+        {
+          "name": "『🛒』market",
+          "type": "GUILD_TEXT",
+          "position": 2,
+          "description": "Salon où les utilisateurs peuvent acheter des services ou des licences du bot."
+        },
+        {
+          "name": "『🎬』partage-bot",
+          "type": "GUILD_TEXT",
+          "position": 3,
+          "description": "Pour partager des screenshots ou des idées concernant le bot."
+        },
+        {
+          "name": "『📩』suggestions-bot",
+          "type": "GUILD_TEXT",
+          "position": 4,
+          "description": "Pour recueillir des suggestions des utilisateurs concernant les améliorations du bot."
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "position": 3,
+      "channels": [
+        {
+          "name": "『📮』-demande-aide",
+          "type": "GUILD_TEXT",
+          "position": 0,
+          "description": "Salon pour les demandes d'assistance liées au bot."
+        },
+        {
+          "name": "『📩』ticket-support",
+          "type": "GUILD_TEXT",
+          "position": 1,
+          "description": "Pour l'ouverture de tickets de support privé pour des questions liées au bot."
+        },
+        {
+          "name": "『🛋』vocal-staff",
+          "type": "GUILD_VOICE",
+          "position": 2,
+          "description": "Un salon vocal où l'équipe de gestion peut discuter des problèmes du bot."
+        },
+        {
+          "name": "『logs』",
+          "type": "GUILD_TEXT",
+          "position": 3,
+          "description": "Pour suivre les journaux d'activité du bot."
+        }
+      ]
+    },
+    {
+      "name": "Salons vocaux",
+      "position": 4,
+      "channels": [
+        {
+          "name": "『🍀』Vocal-Utilisation-Bot",
+          "type": "GUILD_VOICE",
+          "position": 0,
+          "description": "Salon vocal où les utilisateurs peuvent discuter tout en utilisant le bot."
+        }
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "name": "@everyone",
+      "color": 0,
+      "hoist": false,
+      "permissions": "2248473465835073",
+      "mentionable": false,
+      "position": 0
+    },
+    {
+      "name": "Admin",
+      "color": 3447003,
+      "hoist": true,
+      "permissions": "28587301797887",
+      "mentionable": false,
+      "position": 1
+    },
+    {
+      "name": "Modérateur",
+      "color": 10038562,
+      "hoist": true,
+      "permissions": "2171239657031",
+      "mentionable": false,
+      "position": 2
+    }
+  ]
+}

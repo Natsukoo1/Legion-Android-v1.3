@@ -1,0 +1,23 @@
+
+        Server Name: LEGION SEFLBOT
+        Server ID: 1235688021047906445
+        Owner ID: 813514236021178428 (Inconnu)
+        Member Count: 1
+        Region: en-US
+        Created At: Thu May 02 2024 22:23:02 GMT+0200 (heure d’été d’Europe centrale)
+        System Channel ID: undefined
+        Verification Level: NONE
+        Default Channel ID: undefined
+        Roles Count: 4
+        Channels Count: 20
+        Emojis Count: 0
+        Bans Count: 0
+        Features: 
+        Vanity URL: None
+        Boost Count: 0
+        Premium Tier: NONE
+        Boosts Enabled: false
+        Member Verification Level: NONE
+        Channels: GUILD_CATEGORY: INFORMATIONS, GUILD_TEXT: 『📃』changelog, GUILD_TEXT: 『👋』bienvenue, GUILD_TEXT: 『⛔』règles, GUILD_TEXT: 『🗂』informations, GUILD_CATEGORY: Salons textuels, GUILD_TEXT: 『💬』général, GUILD_TEXT: 『❓』support-bot, GUILD_TEXT: 『🛒』market, GUILD_TEXT: 『🎬』partage-bot, GUILD_TEXT: 『📩』suggestions-bot, GUILD_CATEGORY: Staff Management, GUILD_TEXT: 『📮』-demande-aide, GUILD_TEXT: 『📩』ticket-support, GUILD_VOICE: 『🛋』vocal-staff, GUILD_TEXT: 『logs』, GUILD_CATEGORY: Salons vocaux, GUILD_VOICE: 『🍀』Vocal-Utilisation-Bot, GUILD_TEXT: verification, GUILD_CATEGORY: Tickets
+        Roles: @everyone, FONDATEUR, DEVELOPPEUR, Arrivants
+        
