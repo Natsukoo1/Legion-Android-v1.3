@@ -18,7 +18,8 @@ module.exports = {
         const slapGifs = [
             "https://media.tenor.com/CvBTA0GyrogAAAAC/anime-slap.gif",
             "https://media.tenor.com/sgVBbLazB7gAAAAd/penguin-slap-slap.gif",
-            "https://media.tenor.com/JcQI_hRcf3AAAAAd/girl-slap-boy-girl-punch-boy.gif",
+            "https://media.tenor.com/E3OW-MYYum0AAAAd/no-angry.gif",
+			"https://media.tenor.com/Sv8LQZAoQmgAAAAC/chainsaw-man-csm.gif",
             // Ajoutez autant de liens de GIFs que vous le souhaitez
         ];
 
