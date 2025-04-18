@@ -66,7 +66,11 @@ module.exports = {
             "• 𝙫𝙤𝙞𝙩𝙪𝙧𝙚 @𝙪𝙩𝙞𝙡𝙞𝙨𝙖𝙩𝙚𝙪𝙧 🚗\n" +
             "   (Associe une voiture à un utilisateur mentionné)\n\n" +
             "• 𝙘𝙧𝙪𝙨𝙝 @𝙪𝙩𝙞𝙡𝙞𝙨𝙖𝙩𝙚𝙪𝙧 💘\n" +
-            "   (Affiche le crush secret de l'utilisateur mentionné)\n" +
+            "   (Affiche le crush secret de l'utilisateur mentionné)\n\n" +
+            "• 𝙥𝙪𝙣𝙘𝙝 @𝙪𝙩𝙞𝙡𝙞𝙨𝙖𝙩𝙚𝙪𝙧 🥊\n" +
+            "   (Donne un coup de poing à l'utilisateur mentionné)\n\n" +
+            "• 𝙘𝙝𝙪𝙩 🤫\n" +
+            "   (Fait taire quelqu’un avec style)\n" +
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━```";
 
         // Envoyer le message d'aide complet
