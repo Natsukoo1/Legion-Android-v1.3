@@ -13,7 +13,6 @@ module.exports = {
 
         const punchGifs = [
             "https://media.tenor.com/wOCOTBGZJyEAAAAd/chikku-neesan-girl-hit-wall.gif",
-            "https://media.tenor.com/VtcamdTzmoIAAAAd/naruto-haku.gif",
 			"https://media.tenor.com/3nPnUT5Y08EAAAAd/watch-yo-tone-watch-your-tone.gif",
         ];
 
