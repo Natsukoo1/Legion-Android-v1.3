@@ -3,15 +3,10 @@ module.exports = {
     aliases: [],
     description: "Aide premium Discord.",
     run: async (message, args, command, client) => {
-        if (message.author.bot) {
-            // Ignorer les commandes des bots
-            return;
-        }
+        if (message.author.bot) return;
 
-        // Supprimer le message initial
         message.delete();
 
-        // Message d'aide premium
         const helpMessage = 
             "```diff\n" +
             ">> Aide Premium << \n" +
@@ -25,6 +20,8 @@ module.exports = {
             "   (Supprime tes messages)\n" +
             "• 𝙣𝙞𝙩𝙧𝙤 🚀\n" +
             "   (Active le nitro sniper)\n" +
+            "• 𝙝𝙮𝙥𝙚𝙨𝙦𝙪𝙖𝙙 🏠\n" +
+            "   (Change ton badge HypeSquad)\n" +
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
             "• 𝙪𝙨𝙚𝙧𝙞𝙣𝙛𝙤 + @𝙪𝙩𝙞𝙡𝙞𝙨𝙖𝙩𝙚𝙪𝙧 👤\n" +
             "   (Donnes les informations sur un utilisateur)\n" +
@@ -47,7 +44,6 @@ module.exports = {
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
             "```";
 
-        // Envoie le message d'aide dans le canal
         message.channel.send(helpMessage);
     }
 };
