@@ -1,15 +1,11 @@
 const axios = require('axios');
 
-const importJimp = async () => {
-    const mod = await import('jimp');
-    return mod.default || mod;
-};
-
 module.exports = {
     name: "tweet",
-    description: "Tweet avec photo de profil sur l'avatar gris (Jimp dynamique)",
-    run: async (message, args, command, client) => {
+    description: "Tweet avec photo de profil intégrée sur l'avatar gris (Jimp dynamique)",
+    run: async (message, args) => {
         if (message.author.bot) return;
+
         if (message.deletable) {
             message.delete().catch(() => {});
         }
@@ -36,26 +32,30 @@ module.exports = {
             });
         }
 
-        // Import dynamique fiable
-        const Jimp = await importJimp();
-
-        const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
-
-        const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
-
         try {
+            // Import dynamique de Jimp avec récupération de .default
+            const JimpModule = await import('jimp');
+            const Jimp = JimpModule.default;
+
+            const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
+
+            const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
+
             const response = await axios.get(tweetApiUrl, { timeout: 10000 });
             if (response.status === 200 && response.data.success) {
                 const tweetImageUrl = response.data.message;
 
+                // Chargement des images
                 const [tweetImage, avatarImageRaw] = await Promise.all([
                     Jimp.read(tweetImageUrl),
                     Jimp.read(mentionedUser.displayAvatarURL({ format: 'png', size: 128 }))
                 ]);
 
+                // Redimensionner l'avatar
                 const avatarSize = 80;
                 avatarImageRaw.resize(avatarSize, avatarSize);
 
+                // Créer un masque circulaire pour l'avatar
                 const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
                 mask.scan(0, 0, avatarSize, avatarSize, function (x, y, idx) {
                     const radius = avatarSize / 2;
@@ -64,12 +64,13 @@ module.exports = {
                     const dx = x - centerX;
                     const dy = y - centerY;
                     if (dx * dx + dy * dy <= radius * radius) {
-                        this.bitmap.data[idx + 3] = 255;
+                        this.bitmap.data[idx + 3] = 255; // Alpha opaque
                     }
                 });
 
                 avatarImageRaw.mask(mask, 0, 0);
 
+                // Position de l'avatar sur l'image tweet
                 const avatarX = 55;
                 const avatarY = 35;
 
