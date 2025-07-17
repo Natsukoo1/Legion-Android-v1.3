@@ -24,7 +24,7 @@ module.exports = {
             return message.channel.send("Veuillez fournir le texte du tweet.").then(m => setTimeout(() => m.delete(), 5000));
         }
 
-        const whiteAvatarUrl = 'https://i.imgur.com/T3pOaH0.png';
+        const whiteAvatarUrl = 'https://i.imgur.com/T3pOaH0.png'; // avatar blanc
         const avatarUrl = mentionedUser.displayAvatarURL({ format: 'png', size: 128 });
 
         const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(whiteAvatarUrl)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
@@ -39,7 +39,7 @@ module.exports = {
             const avatarSize = 80;
             avatarImage.resize(avatarSize, avatarSize);
 
-            // Créer un masque rond
+            // Créer un masque rond simple
             const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
             mask.scan(0, 0, avatarSize, avatarSize, (x, y, idx) => {
                 const radius = avatarSize / 2;
@@ -48,7 +48,7 @@ module.exports = {
                 const dx = x - centerX;
                 const dy = y - centerY;
                 if (dx * dx + dy * dy <= radius * radius) {
-                    mask.bitmap.data[idx + 3] = 255; // alpha fully opaque inside circle
+                    mask.bitmap.data[idx + 3] = 255; // alpha opaque dans le cercle
                 }
             });
 
@@ -56,7 +56,7 @@ module.exports = {
 
             // Décaler la photo vers le bas de 60px
             const avatarX = 50;
-            const avatarY = 28 + 60; // 2cm décalage vers le bas
+            const avatarY = 28 + 60;
 
             tweetImage.composite(avatarImage, avatarX, avatarY);
 
