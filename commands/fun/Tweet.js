@@ -23,7 +23,7 @@ module.exports = {
         // Récupérer l'avatar Discord au format PNG 128px
         const avatarUrl = mentionedUser.displayAvatarURL({ format: 'png', size: 128 });
 
-        // Récupérer le vrai pseudo affiché dans le serveur
+        // Récupérer le pseudo affiché dans le serveur ou fallback username
         let nickname = mentionedUser.username;
         if (message.guild) {
             const mentionedMember = message.mentions.members.first();
@@ -40,8 +40,8 @@ module.exports = {
             });
         }
 
-        // URL API Nekobot pour générer l'image tweet (avec un avatar générique)
-        const genericAvatar = 'https://i.imgur.com/AfFp7pu.png'; // image grise par défaut
+        // URL API Nekobot - on met une image de profil générique (le rond gris)
+        const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
         const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
 
         try {
@@ -49,15 +49,16 @@ module.exports = {
             if (response.status === 200 && response.data.success) {
                 const tweetImageUrl = response.data.message;
 
-                // Charger l'image tweet et l'avatar Discord
+                // Charger l'image tweet générée par Nekobot
                 const tweetImage = await Jimp.read(tweetImageUrl);
+                // Charger l'avatar Discord
                 const avatarImage = await Jimp.read(avatarUrl);
 
-                // Redimensionner avatar à 80x80
+                // Taille de l'avatar sur le tweet
                 const avatarSize = 80;
                 avatarImage.resize(avatarSize, avatarSize);
 
-                // Créer un masque rond pour l'avatar
+                // Création du masque rond pour l'avatar
                 const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
                 mask.scan(0, 0, avatarSize, avatarSize, (x, y, idx) => {
                     const radius = avatarSize / 2;
@@ -65,21 +66,22 @@ module.exports = {
                     const centerY = radius;
                     const dx = x - centerX;
                     const dy = y - centerY;
-                    if (dx*dx + dy*dy <= radius*radius) {
+                    if (dx * dx + dy * dy <= radius * radius) {
                         mask.bitmap.data[idx + 3] = 255; // alpha opaque
                     }
                 });
                 avatarImage.mask(mask, 0, 0);
 
-                // Position du rond gris sur l'image tweet (à coller)
+                // Position exacte du rond gris dans l'image tweet de Nekobot
                 const avatarX = 55;
                 const avatarY = 35;
+
+                // Coller l'avatar masqué sur l'image tweet à la bonne position
                 tweetImage.composite(avatarImage, avatarX, avatarY);
 
-                // Envoyer l'image finale
+                // Exporter le buffer PNG et envoyer
                 const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
                 message.channel.send({ files: [{ attachment: buffer, name: 'tweet_image.png' }] });
-
             } else {
                 message.channel.send("Une erreur s'est produite lors de la génération du tweet.");
             }
