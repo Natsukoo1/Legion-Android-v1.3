@@ -39,11 +39,31 @@ module.exports = {
 
             avatarImage.resize(80, 80);
 
-            // Position du rond avatar dans l'image tweet Nekobot (approx)
-            const avatarX = 50;
-            const avatarY = 28;
+            // Création du masque rond
+            const mask = new Jimp(80, 80, 0x00000000);
+            mask.scan(0, 0, mask.bitmap.width, mask.bitmap.height, function (x, y, idx) {
+                const radius = 40;
+                const centerX = 40;
+                const centerY = 40;
+                const dx = x - centerX;
+                const dy = y - centerY;
 
-            // Coller directement sans masque pour tester
+                if (dx * dx + dy * dy <= radius * radius) {
+                    mask.bitmap.data[idx + 0] = 255;
+                    mask.bitmap.data[idx + 1] = 255;
+                    mask.bitmap.data[idx + 2] = 255;
+                    mask.bitmap.data[idx + 3] = 255;
+                } else {
+                    mask.bitmap.data[idx + 3] = 0;
+                }
+            });
+
+            avatarImage.mask(mask, 0, 0);
+
+            // Descendre l'image d'environ 2cm (~75 pixels)
+            const avatarX = 50;
+            const avatarY = 28 + 75;
+
             tweetImage.composite(avatarImage, avatarX, avatarY);
 
             const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
