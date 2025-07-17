@@ -61,8 +61,8 @@ module.exports = {
             avatarImage.mask(mask, 0, 0);
 
             // Descendre l'image d'environ 2cm (~75 pixels)
-            const avatarX = 65;
-            const avatarY = 30;
+            const avatarX = 55;
+            const avatarY = 33;
 
             tweetImage.composite(avatarImage, avatarX, avatarY);
 
