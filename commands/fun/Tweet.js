@@ -18,6 +18,7 @@ module.exports = {
             });
         }
 
+        // Récupérer l'avatar de l'utilisateur mentionné
         const avatarUrl = mentionedUser.displayAvatarURL({ format: 'png', size: 128 });
 
         let nickname = mentionedUser.username;
@@ -35,9 +36,8 @@ module.exports = {
             });
         }
 
-        // Utiliser un avatar blanc uni à la place du rond gris
-        // Pour avoir un fond propre à remplacer
-        const whiteAvatar = 'https://i.imgur.com/T3pOaH0.png'; // image carrée blanche
+        // Image blanche carrée pour remplacer le rond gris du tweet
+        const whiteAvatar = 'https://i.imgur.com/T3pOaH0.png';
 
         const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(whiteAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
 
@@ -46,14 +46,13 @@ module.exports = {
             if (response.status === 200 && response.data.success) {
                 const tweetImageUrl = response.data.message;
 
-                // Charger les images
                 const tweetImage = await Jimp.read(tweetImageUrl);
                 const avatarImage = await Jimp.read(avatarUrl);
 
                 const avatarSize = 80;
                 avatarImage.resize(avatarSize, avatarSize);
 
-                // Création d'un masque rond pour l'avatar
+                // Créer un masque rond pour l'avatar
                 const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
                 mask.scan(0, 0, avatarSize, avatarSize, (x, y, idx) => {
                     const radius = avatarSize / 2;
@@ -62,27 +61,24 @@ module.exports = {
                     const dx = x - centerX;
                     const dy = y - centerY;
                     if (dx * dx + dy * dy <= radius * radius) {
-                        mask.bitmap.data[idx + 3] = 255; // alpha opaque
+                        mask.bitmap.data[idx + 3] = 255;
                     }
                 });
                 avatarImage.mask(mask, 0, 0);
 
-                // Position précise du rond sur l'image tweet Nekobot
-                const avatarX = 55;
-                const avatarY = 35;
+                // Coller l'avatar sur l'image du tweet aux coordonnées exactes
+                const avatarX = 50;
+                const avatarY = 28;
 
-                // Coller avatar masqué sur le tweet
                 tweetImage.composite(avatarImage, avatarX, avatarY);
 
-                // Envoyer le résultat
                 const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
                 message.channel.send({ files: [{ attachment: buffer, name: 'tweet_image.png' }] });
-
             } else {
                 message.channel.send("Erreur lors de la génération du tweet.");
             }
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
             message.channel.send("Erreur lors de la création de l'image.");
         }
     }
