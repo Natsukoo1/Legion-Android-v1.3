@@ -1,9 +1,9 @@
-const { createCanvas, loadImage } = require('canvas');
 const axios = require('axios');
+const Jimp = require('jimp');
 
 module.exports = {
     name: "tweet",
-    description: "Ajoute un tweet avec la vraie photo de profil sur l'avatar gris.",
+    description: "Génère un tweet avec la vraie photo de profil intégrée sans canvas, grâce à Jimp.",
     run: async (message, args, command, client) => {
         if (message.author.bot) return;
 
@@ -33,7 +33,7 @@ module.exports = {
             });
         }
 
-        // Utilise un avatar générique transparent (ou gris clair) pour générer le tweet sans avatar
+        // Avatar générique transparent pour la génération (remplace par un gris si tu veux)
         const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
 
         const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
@@ -42,42 +42,53 @@ module.exports = {
             const response = await axios.get(tweetApiUrl, { timeout: 10000 });
             if (response.status === 200 && response.data.success) {
                 const tweetImageUrl = response.data.message;
-                // Charger les images
-                const [tweetImage, avatarImage] = await Promise.all([
-                    loadImage(tweetImageUrl),
-                    loadImage(mentionedUser.displayAvatarURL({ format: 'png', size: 128 }))
+
+                // Charger les images avec Jimp
+                const [tweetImage, avatarImageRaw] = await Promise.all([
+                    Jimp.read(tweetImageUrl),
+                    Jimp.read(mentionedUser.displayAvatarURL({ format: 'png', size: 128 }))
                 ]);
 
-                const canvas = createCanvas(tweetImage.width, tweetImage.height);
-                const ctx = canvas.getContext('2d');
-
-                // Dessiner l'image tweet complète
-                ctx.drawImage(tweetImage, 0, 0);
-
-                // Position et taille du cercle avatar (à ajuster précisément selon image tweet)
+                // Redimensionner avatar à la taille désirée (80x80)
                 const avatarSize = 80;
+                avatarImageRaw.resize(avatarSize, avatarSize);
+
+                // Pour faire un masque circulaire sur l'avatar (Jimp ne fait pas ça direct, on va tricher avec alpha mask)
+                // Créer un masque circulaire
+                const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
+                mask.scan(0, 0, avatarSize, avatarSize, function (x, y, idx) {
+                    const radius = avatarSize / 2;
+                    const centerX = radius;
+                    const centerY = radius;
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    if (dx * dx + dy * dy <= radius * radius) {
+                        // Alpha = 255 (opaque)
+                        this.bitmap.data[idx + 3] = 255;
+                    }
+                });
+
+                // Appliquer le masque circulaire sur l'avatar
+                avatarImageRaw.mask(mask, 0, 0);
+
+                // Position du cercle avatar sur l'image tweet (à ajuster si besoin)
                 const avatarX = 55;
                 const avatarY = 35;
 
-                // Dessiner avatar en rond (clip cercle)
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.clip();
+                // Coller l'avatar masqué sur l'image tweet
+                tweetImage.composite(avatarImageRaw, avatarX, avatarY);
 
-                ctx.drawImage(avatarImage, avatarX, avatarY, avatarSize, avatarSize);
-                ctx.restore();
+                // Exporter en buffer
+                const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
 
-                // Envoi image finale
-                const buffer = canvas.toBuffer();
+                // Envoyer le résultat
                 message.channel.send({ files: [{ attachment: buffer, name: 'tweet_avatar.png' }] });
             } else {
                 message.channel.send("Erreur lors de la génération du tweet.");
             }
         } catch (error) {
             console.error(error);
-            message.channel.send("Erreur lors de la création de l'image tweet.");
+            message.channel.send("Une erreur est survenue lors de la création de l'image tweet.");
         }
     }
 };
