@@ -1,9 +1,9 @@
 const axios = require('axios');
-const Jimp = require('jimp');
+const Jimp = require('jimp').default; // <-- ici
 
 module.exports = {
     name: "tweet",
-    description: "Génère un tweet avec la vraie photo de profil intégrée sans canvas, grâce à Jimp.",
+    description: "Tweet avec photo de profil sur l'avatar gris (Jimp)",
     run: async (message, args, command, client) => {
         if (message.author.bot) return;
 
@@ -33,7 +33,6 @@ module.exports = {
             });
         }
 
-        // Avatar générique transparent pour la génération (remplace par un gris si tu veux)
         const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
 
         const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
@@ -43,18 +42,14 @@ module.exports = {
             if (response.status === 200 && response.data.success) {
                 const tweetImageUrl = response.data.message;
 
-                // Charger les images avec Jimp
                 const [tweetImage, avatarImageRaw] = await Promise.all([
                     Jimp.read(tweetImageUrl),
                     Jimp.read(mentionedUser.displayAvatarURL({ format: 'png', size: 128 }))
                 ]);
 
-                // Redimensionner avatar à la taille désirée (80x80)
                 const avatarSize = 80;
                 avatarImageRaw.resize(avatarSize, avatarSize);
 
-                // Pour faire un masque circulaire sur l'avatar (Jimp ne fait pas ça direct, on va tricher avec alpha mask)
-                // Créer un masque circulaire
                 const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
                 mask.scan(0, 0, avatarSize, avatarSize, function (x, y, idx) {
                     const radius = avatarSize / 2;
@@ -63,25 +58,19 @@ module.exports = {
                     const dx = x - centerX;
                     const dy = y - centerY;
                     if (dx * dx + dy * dy <= radius * radius) {
-                        // Alpha = 255 (opaque)
                         this.bitmap.data[idx + 3] = 255;
                     }
                 });
 
-                // Appliquer le masque circulaire sur l'avatar
                 avatarImageRaw.mask(mask, 0, 0);
 
-                // Position du cercle avatar sur l'image tweet (à ajuster si besoin)
                 const avatarX = 55;
                 const avatarY = 35;
 
-                // Coller l'avatar masqué sur l'image tweet
                 tweetImage.composite(avatarImageRaw, avatarX, avatarY);
 
-                // Exporter en buffer
                 const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
 
-                // Envoyer le résultat
                 message.channel.send({ files: [{ attachment: buffer, name: 'tweet_avatar.png' }] });
             } else {
                 message.channel.send("Erreur lors de la génération du tweet.");
