@@ -3,95 +3,85 @@ const Jimp = require('jimp');
 
 module.exports = {
     name: "tweet",
-    description: "Tweet avec photo de profil intégrée sans canvas",
+    description: "Tweet avec photo de profil affichée (Jimp)",
     run: async (message, args) => {
         if (message.author.bot) return;
-        if (message.deletable) {
-            message.delete().catch(() => {});
-        }
+        if (message.deletable) message.delete().catch(() => {});
 
         const mentionedUser = message.mentions.users.first();
         if (!mentionedUser) {
-            return message.channel.send("Veuillez mentionner un utilisateur.").then(msg => {
-                setTimeout(() => msg.delete(), 5000);
+            return message.channel.send("Veuillez mentionner un utilisateur.").then(m => {
+                setTimeout(() => m.delete(), 5000);
             });
         }
 
-        // Pseudo affiché sur le serveur si possible
+        // Pseudo à afficher (nickname ou username)
         let nickname = mentionedUser.username;
         if (message.guild) {
-            const mentionedMember = message.mentions.members.first();
-            if (mentionedMember && mentionedMember.displayName) {
-                nickname = mentionedMember.displayName;
-            }
+            const member = message.guild.members.cache.get(mentionedUser.id);
+            if (member && member.displayName) nickname = member.displayName;
         }
 
-        // Texte du tweet sans mention
-        const tweetText = args.filter(arg => !arg.startsWith('<@')).join(" ");
+        const tweetText = args.filter(arg => !arg.startsWith('<@')).join(' ');
         if (!tweetText) {
-            return message.channel.send("Veuillez fournir le texte du tweet.").then(msg => {
-                setTimeout(() => msg.delete(), 5000);
+            return message.channel.send("Veuillez fournir le texte du tweet.").then(m => {
+                setTimeout(() => m.delete(), 5000);
             });
         }
 
-        // URL avatar gris générique (l’API a besoin d’une image)
-        const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
-
-        // URL API Nekobot
-        const tweetApiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
-
         try {
-            // Récupérer l’image tweet générée
-            const response = await axios.get(tweetApiUrl, { timeout: 10000 });
-            if (response.status !== 200 || !response.data.success) {
+            // On utilise une image de fond neutre pour le tweet (avatar gris)
+            const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
+
+            // Appel à l'API Nekobot
+            const apiUrl = `https://nekobot.xyz/api/imagegen?type=tweet&image=${encodeURIComponent(genericAvatar)}&text=${encodeURIComponent(tweetText)}&username=${encodeURIComponent(nickname)}`;
+
+            const response = await axios.get(apiUrl, { timeout: 10000 });
+            if (!response.data.success) {
                 return message.channel.send("Erreur lors de la génération du tweet.");
             }
 
-            const tweetImageUrl = response.data.message;
+            // Charger l'image tweet
+            const tweetImage = await Jimp.read(response.data.message);
 
-            // Charger image tweet
-            const tweetImage = await Jimp.read(tweetImageUrl);
-
-            // Charger avatar réel (format PNG taille 128)
+            // Charger l'avatar Discord (PNG 128x128)
             const avatarUrl = mentionedUser.displayAvatarURL({ format: 'png', size: 128 });
             const avatarImage = await Jimp.read(avatarUrl);
 
-            // Redimensionner avatar à 80x80
+            // Redimensionner avatar à 80x80 pixels
             const avatarSize = 80;
             avatarImage.resize(avatarSize, avatarSize);
 
-            // Créer masque rond
+            // Créer masque rond pour l'avatar
             const mask = new Jimp(avatarSize, avatarSize, 0x00000000);
-            mask.scan(0, 0, avatarSize, avatarSize, function (x, y, idx) {
+            mask.scan(0, 0, avatarSize, avatarSize, function(x, y, idx) {
                 const radius = avatarSize / 2;
                 const centerX = radius;
                 const centerY = radius;
                 const dx = x - centerX;
                 const dy = y - centerY;
-                if (dx * dx + dy * dy <= radius * radius) {
-                    this.bitmap.data[idx + 3] = 255;
+                if (dx*dx + dy*dy <= radius*radius) {
+                    this.bitmap.data[idx + 3] = 255; // alpha à 255 (opaque)
                 }
             });
 
-            // Appliquer masque rond sur avatar
+            // Appliquer le masque rond à l'avatar
             avatarImage.mask(mask, 0, 0);
 
-            // Position exacte de l'avatar dans l'image tweet (validé visuellement)
+            // Position du coin supérieur gauche de l'avatar sur le tweet
             const avatarX = 55;
             const avatarY = 35;
 
-            // Coller l’avatar sur l’image tweet
+            // Coller l'avatar sur l'image tweet
             tweetImage.composite(avatarImage, avatarX, avatarY);
 
-            // Générer buffer PNG
+            // Générer buffer PNG et envoyer
             const buffer = await tweetImage.getBufferAsync(Jimp.MIME_PNG);
-
-            // Envoyer le résultat
-            message.channel.send({ files: [{ attachment: buffer, name: 'tweet_avatar.png' }] });
+            message.channel.send({ files: [{ attachment: buffer, name: 'tweet.png' }] });
 
         } catch (error) {
-            console.error(error);
-            message.channel.send("Erreur lors de la création de l'image tweet.");
+            console.error('Erreur commande tweet:', error);
+            message.channel.send("Une erreur est survenue lors de la création de l'image tweet.");
         }
     }
 };
