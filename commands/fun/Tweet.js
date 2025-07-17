@@ -1,5 +1,10 @@
 const axios = require('axios');
 
+const importJimp = async () => {
+    const mod = await import('jimp');
+    return mod.default || mod;
+};
+
 module.exports = {
     name: "tweet",
     description: "Tweet avec photo de profil sur l'avatar gris (Jimp dynamique)",
@@ -31,8 +36,8 @@ module.exports = {
             });
         }
 
-        // Import dynamique de Jimp
-        const Jimp = (await import('jimp')).default;
+        // Import dynamique fiable
+        const Jimp = await importJimp();
 
         const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
 
