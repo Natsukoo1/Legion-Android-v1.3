@@ -24,9 +24,11 @@ module.exports = {
                 "• Commandes d'administration :\n" +
                 "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
                 "• 𝙞𝙥𝙞𝙣𝙛𝙤\n" +
-                "  (affiche des informations sur l'adresse IP)\n" +
+                "  (Affiche des informations sur l'adresse IP)\n" +
+				"• 𝙡𝙚𝙖𝙪𝙡𝙞𝙙𝙤𝙧𝙩\n" +
+				"  (Met un coup spécial à leaulitdort)\n" +
                 "• 𝙬𝙝𝙞𝙩𝙚𝙡𝙞𝙨𝙩\n" +
-                "  (ajoute un utilisateur à la liste blanche)\n"
+                "  (Ajoute un utilisateur à la liste blanche)\n"
             );
 
         // Envoie le premier embed dans le canal
