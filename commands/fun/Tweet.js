@@ -1,12 +1,10 @@
 const axios = require('axios');
-const Jimp = require('jimp').default; // <-- ici
 
 module.exports = {
     name: "tweet",
-    description: "Tweet avec photo de profil sur l'avatar gris (Jimp)",
+    description: "Tweet avec photo de profil sur l'avatar gris (Jimp dynamique)",
     run: async (message, args, command, client) => {
         if (message.author.bot) return;
-
         if (message.deletable) {
             message.delete().catch(() => {});
         }
@@ -32,6 +30,9 @@ module.exports = {
                 setTimeout(() => msg.delete(), 5000);
             });
         }
+
+        // Import dynamique de Jimp
+        const Jimp = (await import('jimp')).default;
 
         const genericAvatar = 'https://i.imgur.com/AfFp7pu.png';
 
